@@ -92,21 +92,21 @@ This dataset describes NYC subway station locations, the lines and routes runnin
 ##### Step 2: Analyze data.
 
 There are `r nrow(distinct(nyctransit_df, line, station_name))` distinct stations in this dataset.
+There are `r nyctransit_df %>% filter(ada == "TRUE") %>% distinct(line, station_name) %>% count()` distinct stations that are ADA compliant. Of the `r nyctransit_df %>% filter(vending == "NO") %>% count()` station entrances/exits that do not have vending services, `r nyctransit_df %>% filter(vending == "NO" & entry == "TRUE") %>% count()` allow entry (`r 69/183 * 100` percent).
 
-This code will further analyze these stations.
+##### Step 3: Reformat dataset such that route number and name are distinct, further analyze.
 
 ```{r}
-nyctransit_df %>% 
-  filter(ada == "TRUE") %>% 
-  distinct(line, station_name) %>% 
-  count()
-
-nyctransit_df %>% 
-  filter(vending == "NO", entry == "TRUE") %>%
-  distinct(line, station_name) %>% 
-  count()
+nyctransit_tidy_df =
+  nyctransit_df %>%
+  mutate_at(vars(route1:route11), as.character) %>% 
+  pivot_longer(
+    route1:route11,
+    names_to = "route_name",
+    names_prefix = "route",
+    values_to = "route_number"
+  ) %>% 
+  drop_na(route_number)
 ```
 
-There are 84 distinct stations that are ADA compliant. Of stations that do not have vending services, 43 allow entry.
-
-
+There are `r nyctransit_tidy_df %>% filter(route_number == "A") %>% distinct(line, station_name) %>% count()` stations that serve the A train. Of these stations, only `r nyctransit_tidy_df %>% filter(route_number == "A" & ada == "TRUE") %>% distinct(line, station_name) %>% count()` are ADA compliant.
