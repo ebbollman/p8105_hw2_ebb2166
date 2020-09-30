@@ -69,3 +69,6 @@ left_join(precip_df, month_df, by = "month") %>%
   select(-month)
 ```
 
+Step 4: Describe datasets.
+
+This dataset contains information from the Mr. Trashwheel trash collector in Baltimore, Maryland. As trash enters the inner harbor, the trashwheel collects that trash, and stores it in a dumpster. The dataset contains information on year, month, and amount trash collected, including specific kinds of trash. There are a total of `r nrow(trashwheel_df)` observations on this data for the dumpster. Additional data include monthly precipitation data for the years `r precip_df %>% pull(year) %>% min()` to `r precip_df %>% pull(year) %>% max()` and include observations on `r nrow(precip_df)`. The median number of sports balls found in a dumpster in 2017 was `r trashwheel_df %>% filter(year == 2017) %>% pull(sports_balls) %>% median()`. The total precipitation in 2018 was `r precip_df %>% filter(year == 2018) %>% pull(total) %>% sum()` inches.
