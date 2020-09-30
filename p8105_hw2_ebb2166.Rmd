@@ -110,3 +110,40 @@ nyctransit_tidy_df =
 ```
 
 There are `r nyctransit_tidy_df %>% filter(route_number == "A") %>% distinct(line, station_name) %>% count()` stations that serve the A train. Of these stations, only `r nyctransit_tidy_df %>% filter(route_number == "A" & ada == "TRUE") %>% distinct(line, station_name) %>% count()` are ADA compliant.
+
+## Problem 3
+
+##### Step 1: Read and clean pols-month dataset. 
+
+```{r}
+pols_df = 
+  read_csv(
+    "./data/fivethirtyeight_datasets/pols-month.csv") %>% 
+  separate(
+    mon,
+    into = c("year", "month", "date"),
+    sep = "-"
+  ) %>% 
+  mutate_at(vars(year:date), as.integer)
+
+month_df = 
+  tibble(
+    month = 1:12,
+    month_name = month.name
+  )
+
+left_join(pols_df, month_df, by = "month") %>% 
+  select(year, month_name, everything()) %>%
+  mutate_at(vars(prez_gop, prez_dem), as.character) %>% 
+  mutate(
+    president = case_when(
+      prez_dem == 1 ~ "dem",
+      prez_gop == 1 ~ "gop",
+      prez_gop == 2 ~ "gop"
+    )
+  ) %>% 
+  select(-month, -date, -prez_gop, -prez_dem)
+```
+
+Cleaning steps included: separate date, convert month to name instead of number, drop date; creating character president variable to replace numerical GOP and DEM specific president variables; dropping unecessary variables.
+
