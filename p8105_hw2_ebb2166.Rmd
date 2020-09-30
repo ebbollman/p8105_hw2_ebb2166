@@ -11,7 +11,7 @@ library(readxl)
 
 ## Problem 1
 
-Step 1: Read the Mr. Trashwheel dataset, with clean names, omitting non-data entries and values that are not dumpster-specific.
+##### Step 1: Read the Mr. Trashwheel dataset, with clean names, omitting non-data entries and values that are not dumpster-specific.
 
 ```{r}
 trashwheel_df = 
@@ -27,7 +27,7 @@ trashwheel_df =
   )
 ```
 
-Step 2: Read the precipitation data for 2017 and 2018. 
+##### Step 2: Read the precipitation data for 2017 and 2018. 
 
 ```{r}
 precip_2018 = 
@@ -53,7 +53,7 @@ precip_2017 =
   relocate(year)
 ```
 
-Step 3: Combine annual precipitation. Convert month from dbl to character variable.
+##### Step 3: Combine annual precipitation. Convert month from dbl to character variable.
 
 ```{r}
 precip_df = 
@@ -69,6 +69,22 @@ left_join(precip_df, month_df, by = "month") %>%
   select(-month)
 ```
 
-Step 4: Describe datasets.
+##### Step 4: Describe datasets.
 
 This dataset contains information from the Mr. Trashwheel trash collector in Baltimore, Maryland. As trash enters the inner harbor, the trashwheel collects that trash, and stores it in a dumpster. The dataset contains information on year, month, and amount trash collected, including specific kinds of trash. There are a total of `r nrow(trashwheel_df)` observations on this data for the dumpster. Additional data include monthly precipitation data for the years `r precip_df %>% pull(year) %>% min()` to `r precip_df %>% pull(year) %>% max()` and include observations on `r nrow(precip_df)`. The median number of sports balls found in a dumpster in 2017 was `r trashwheel_df %>% filter(year == 2017) %>% pull(sports_balls) %>% median()`. The total precipitation in 2018 was `r precip_df %>% filter(year == 2018) %>% pull(total) %>% sum()` inches.
+
+## Problem 2
+
+##### Step 1: Read the NYC Transit data and clean, describe.
+
+```{r}
+nyctransit_df = 
+  read_csv(
+    "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  janitor::clean_names() %>%
+  select(line:entry, vending, ada) %>% 
+  mutate(entry = recode(entry, YES = "TRUE", NO = "FALSE")) %>% 
+  mutate(entry = as.logical(entry))
+```
+
+This dataset describes NYC subway station locations, the lines and routes running through those stations, and various parameters such as if the station offers ticket vending, the type of entrance to the station, and whether the is ADA compliant. Data were first imported, pertinent variables selected, and some variable types transformed. Data are presented on `r nrow(nyctransit_df)` observations for `r ncol(nyctransit_df)` variables. These data are not yet tidy, however, in part because the number of routes passing each station and names of those routes are presented across 11 variable columns.
