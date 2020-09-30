@@ -66,7 +66,7 @@ month_df =
   )
 
 left_join(precip_df, month_df, by = "month") %>% 
-  select(-month)
+  select(year, month_name, total, -month)
 ```
 
 ##### Step 4: Describe datasets.
@@ -147,3 +147,27 @@ left_join(pols_df, month_df, by = "month") %>%
 
 Cleaning steps included: separate date, convert month to name instead of number, drop date; creating character president variable to replace numerical GOP and DEM specific president variables; dropping unecessary variables.
 
+##### Step 2: Read and clean the snp dataset.
+
+```{r}
+snp_df = 
+  read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
+  separate(
+    date,
+    into = c("month", "day", "year"),
+    sep = "/"
+  ) %>% 
+  mutate_at(vars(month:year), as.integer)
+
+month_df = 
+  tibble(
+    month = 1:12,
+    month_name = month.name
+  )
+
+left_join(snp_df, month_df, by = "month") %>% 
+  select(year, month_name, close, -month, -day) %>%
+  arrange(year, month_name)
+```
+
+Cleaning steps included: separating by separate date, convert month to name instead of number, dropping the day variable, and then arranging by year and month. This snp_df now shares variable names 'year' and 'month_name' with the pols_df. 
