@@ -145,7 +145,7 @@ left_join(pols_df, month_df, by = "month") %>%
   select(-month, -date, -prez_gop, -prez_dem)
 ```
 
-Cleaning steps included: separate date, convert month to name instead of number, drop date; creating character president variable to replace numerical GOP and DEM specific president variables; dropping unecessary variables.
+Cleaning steps included: separating date, convert month to name instead of number, drop date; creating character president variable to replace numerical GOP and DEM specific president variables; dropping unecessary variables.
 
 ##### Step 2: Read and clean the snp dataset.
 
@@ -170,4 +170,32 @@ left_join(snp_df, month_df, by = "month") %>%
   arrange(year, month_name)
 ```
 
-Cleaning steps included: separating by separate date, convert month to name instead of number, dropping the day variable, and then arranging by year and month. This snp_df now shares variable names 'year' and 'month_name' with the pols_df. 
+Cleaning steps included: separating date, converting month to its character name instead of number, dropping the day variable, and then arranging by year and month. This snp_df now shares variable names 'year' and 'month_name' with the pols_df. 
+
+##### Step 3: read and clean the unemployment dataset.
+
+```{r}
+unemp_df = 
+  read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>%
+  janitor::clean_names() %>% 
+  pivot_longer(
+    jan:dec,
+    names_to = "month_name",
+    values_to = "unemployment") %>% 
+  mutate(month_name = recode(month_name,
+         `jan` = "January",
+         `feb` = "February",
+         `mar` = "March",
+         `apr` = "April",
+         `may` = "May",
+         `jun` = "June",
+         `jul` = "July",
+         `aug` = "August",
+         `sept` = "September",
+         `oct` = "October",
+         `nov` = "November",
+         `dec` = "December"))
+```
+
+Cleaning steps included: using pivot_longer to make the data tidy such that month is a variable. Additionally, had to recode month_name values to match format of the pols_df and snp_df in preparation for joining. 
+
