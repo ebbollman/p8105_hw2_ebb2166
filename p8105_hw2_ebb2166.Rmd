@@ -10,3 +10,21 @@ library(readxl)
 ```
 
 ## Problem 1
+
+Step 1: Read the Mr. Trashwheel dataset, with clean names, omitting non-data entries and values that are not dumpster-specific.
+
+```{r}
+trashwheel_df = 
+  read_xlsx(
+    "./data/Trash-wheel-Collection-Totals-8-6-19.xlsx",
+    sheet = "Mr. Trash Wheel",
+    range = cell_cols("A:N")) %>% 
+  janitor::clean_names() %>% 
+  drop_na(dumpster) %>% 
+  mutate(
+    sports_balls = round(sports_balls),
+    sports_balls = as.integer(sports_balls)
+  )
+```
+
+Step 2: Read the precipitation data. 
