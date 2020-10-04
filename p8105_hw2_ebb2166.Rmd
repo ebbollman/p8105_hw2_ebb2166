@@ -132,7 +132,8 @@ month_df =
     month_name = month.name
   )
 
-left_join(pols_df, month_df, by = "month") %>% 
+pols_tidy_df =
+  left_join(pols_df, month_df, by = "month") %>% 
   select(year, month_name, everything()) %>%
   mutate_at(vars(prez_gop, prez_dem), as.character) %>% 
   mutate(
@@ -168,7 +169,8 @@ month_df =
     month_name = month.name
   )
 
-left_join(snp_df, month_df, by = "month") %>% 
+snp_tidy_df = 
+  left_join(snp_df, month_df, by = "month") %>% 
   select(year, month_name, close, -month, -day) %>%
   arrange(year, month_name) %>% 
   mutate(month = month_name) %>% 
@@ -209,8 +211,16 @@ Cleaning steps included: using pivot_longer to make the data tidy such that mont
 
 Could not get this to work. Attempted code chunk below. Appeared as though my chunks in steps 1-3 hadn't saved somehow---despite running each individually in environment and everything appearing to work. Initial variable 'month_name' wasn't being recognized in attempted join so edited code chunks above to mutate back to 'month'. Am unclear where I went wrong. Will try to get help to learn for next time. 
 
+```{r}
+pols_tidy_df
+snp_tidy_df
+unemp_df
+
 pols_snp_df = 
-  left_join(pols_df, snp_df, by = c("year", "month"))
+  left_join(pols_tidy_df, snp_tidy_df, by = c("year", "month"))
 
 final_df =
   left_join(pols_snp_df, unemp_df, by = c("year", "month"))
+```
+
+
